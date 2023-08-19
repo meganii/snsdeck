@@ -2,6 +2,9 @@
 
 ElectronによるTweetDeckのようなSNS Viewer
 
+![image](https://github.com/meganii/snsdeck/assets/329554/ba5742f1-d6fa-4634-8137-17b6967b4d69)
+
+
 ## 使い方
 
 ```
