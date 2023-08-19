@@ -28,4 +28,17 @@ module.exports = {
       config: {},
     },
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'meganii',
+          name: 'snsdeck'
+        },
+        prerelease: false,
+        draft: true
+      }
+    }
+  ]
 };
