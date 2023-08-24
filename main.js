@@ -14,25 +14,23 @@ function createWindow () {
     webPreferences: {
       preload: path.join(__dirname, 'preload-page.js')
     }
-  });
-
+  })
   win.loadFile('index.html')
 
   win.webContents.on('did-finish-load', () => {
     const columns = store.get('columns')
-
     if (columns) {
       loadPages(win, columns)
     }
 
     ipcMain.on('addColumn', handleAddCoulmn)
   
-    ipcMain.on('openAddColumn', (event) => {
+    ipcMain.on('openAddColumn', (_event) => {
       openAddColumn(win)
     })
   })
   
-  function handleAddCoulmn(event, column) {
+  function handleAddCoulmn(_event, column) {
     const views = win.getBrowserViews()
     let lastCol
     if(views.length === 0) {
@@ -52,7 +50,7 @@ function createWindow () {
     loadPage(win, column.url, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: lastCol.height}, column.css)
   }
 
-  ipcMain.on('wheel-event', (event, deltaX, deltaY, deltaZ) => {
+  ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {
     for (const view of win.getBrowserViews()) {
       const {x, y, width, height} = view.getBounds()
       view.setBounds({ x: x - deltaX, y: y, width: width, height: height })
@@ -100,20 +98,18 @@ function openAddColumn(window) {
   })
 }
 
-
 app.whenReady().then(() => {
-  createWindow();
-
+  createWindow()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createWindow()
     }
-  });
-});
+  })
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    app.quit()
   }
-});
+})
