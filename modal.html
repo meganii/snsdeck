@@ -19,8 +19,9 @@
     </style>
   </head>
   <body>
-    <input type="text" name="url" id="url" value="" />
-    <input type="text" name="css" id="css" value="" />
+    <input type="text" name="url" id="url" value="" placeholder="URL" />
+    <input type="text" name="css" id="css" value="" placeholder="CSS" />
+    <input type="text" name="partition" id="partition" value="" placeholder="partition" />
     <button id="buttonA" onclick="">Add Column</button>
 
     <script>
@@ -28,8 +29,9 @@
         btn.addEventListener("click", () => {
             const elemUrl = document.getElementById("url")
             const elemCss = document.getElementById("css")
+            const elemPartition = document.getElementById("partition")
             console.log(elemUrl.value, elemCss.value)
-            snsdeck.addColumn({url: elemUrl.value, css: elemCss.value})
+            snsdeck.addColumn({url: elemUrl.value, css: elemCss.value, partition: elemPartition.value})
         });
     </script>
   </body>
