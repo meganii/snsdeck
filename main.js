@@ -38,7 +38,7 @@ function createWindow () {
     } else {
       lastCol = views[views.length-1].getBounds()
     }
-    const col = {url: column.url, css: column.css}
+    const col = {url: column.url, css: column.css, partition: column.partition}
     let columns = store.get('columns')
 
     if(columns) {
@@ -47,7 +47,7 @@ function createWindow () {
       columns = [col]
     }
     store.set('columns', columns)
-    loadPage(win, column.url, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: lastCol.height}, column.css)
+    loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: lastCol.height}, col)
   }
 
   ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {
@@ -58,28 +58,41 @@ function createWindow () {
   })
 }
 
-function loadPages(window, urls) {
-  for (let i = 0; i < urls.length; i++) {
-    const {url, css} = urls[i]
-    loadPage(window, url, { x: i * columnWidth + offset, y: 0, width: columnWidth, height: 800 }, css)
+function loadPages(window, columns) {
+  for (let i = 0; i < columns.length; i++) {
+    loadPage(window, { x: i * columnWidth + offset, y: 0, width: columnWidth, height: 800 }, columns[i])
   }
 }
 
-function loadPage(window, url, bounds, css, js) {
-  const view = new BrowserView({
-    webPreferences: {
-      preload: path.join(__dirname, 'preload-page.js')
-    }
-  });
-  window.addBrowserView(view);
-  view.setBounds(bounds);
+function loadPage(window, bounds, column) {
+  const {url, css, js} = column
+  const view = createBrowserView(column)
+  window.addBrowserView(view)
+  view.setBounds(bounds)
   view.setBackgroundColor("#bfc4cf")
-  view.webContents.loadURL(url);
-  view.setAutoResize({ width: false, height: true });
+  view.webContents.loadURL(url)
+  view.setAutoResize({ width: false, height: true })
   
   view.webContents.on('did-finish-load', () => {
     view.webContents.insertCSS("::-webkit-scrollbar {display: none !important;}" + css)
+    if (js !== undefined && js !== '') {
+      view.webContents.executeJavaScript(js, true)
+    }
   })
+}
+
+function createBrowserView(column) {
+  const {partition} = column
+
+  const webPreferences = {
+    preload: path.join(__dirname, 'preload-page.js'),
+  }
+
+  if (partition !== undefined && partition !== "") {
+    webPreferences.partition =  `persist:${partition}`
+  }
+
+  return new BrowserView({ webPreferences: webPreferences })
 }
 
 function openAddColumn(window) {
