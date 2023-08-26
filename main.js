@@ -29,7 +29,7 @@ function createWindow () {
       openAddColumn(win)
     })
 
-    ipcMain.on('openRemoveColumn', (event, indexOfColumn) => {
+    ipcMain.on('openRemoveColumn', (_event, indexOfColumn) => {
       console.log(indexOfColumn)
       const view = win.getBrowserViews()[indexOfColumn]
       win.removeBrowserView(view)
