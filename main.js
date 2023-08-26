@@ -67,6 +67,7 @@ function createWindow () {
 }
 
 function loadPages(window, columns) {
+  window.webContents.send('onload', columns.length)
   for (let i = 0; i < columns.length; i++) {
     loadPage(window, { x: i * columnWidth + offset, y: 25, width: columnWidth, height: 800 }, columns[i])
   }

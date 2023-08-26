@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('snsdeck', {
         console.log('openRemoveColumn', indexOfColumn)
         ipcRenderer.send('openRemoveColumn', indexOfColumn)
     },
-    onScroll: (callback) => ipcRenderer.on('scroll', callback)
+    onScroll: (callback) => ipcRenderer.on('scroll', callback),
+    onLoadColumns: (callback) => ipcRenderer.on('onload', callback)
 })
