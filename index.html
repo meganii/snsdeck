@@ -13,6 +13,7 @@
     />
     <title>snsDeck</title>
     <style>
+      *,*::before,*::after{box-sizing:border-box}*{margin:0}body{line-height:1.5;-webkit-font-smoothing:antialiased}img,picture,video,canvas,svg{display:block;max-width:100%}input,button,textarea,select{font:inherit}p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}#root,#__next{isolation:isolate}
       body {
         background-color: #f3f3f3;
       }
@@ -21,14 +22,45 @@
         white-space: nowrap;
       }
       #addColumn {
-        position: relative;
-        top: 20px;
+        position: absolute;
+        top: 30px;
         left: 10px;
+      }
+      .controller{
+        margin-left: 150px;
+      }
+      .column {
+        position: absolute;
+        background-color: #cccccc;
+        border-color: black;
+        border: 1px solid;
+        width: 400px;
+        height: 25px;
+        text-align: right;
       }
     </style>
   </head>
   <body>
-    <div id="container"></div>
+    <div id="container">
+      <div class="controller">
+        <div class="column" style="top: 0px; left: 150px;">
+          <button class="close">x</button>
+        </div>
+        <div class="column" style="top: 0px; left: 550px;">
+          <button class="close">x</button>
+        </div>
+      </div>
+    </div>
     <button id="addColumn" onclick="snsdeck.openAddColumn()">AddColumn</button>
+    <script>
+      window.snsdeck.onScroll((_event, deltaX) => {
+        const columns = document.querySelectorAll(".column")
+        for (column of columns) {
+          const newLeft = column.style.left.slice(0, -2) - deltaX
+          column.style.left = `${newLeft}px`
+        }
+        console.log('from BrowserView', deltaX)
+      })
+    </script>
   </body>
 </html>

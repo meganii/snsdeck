@@ -12,7 +12,7 @@ function createWindow () {
     width: 1000,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload-page.js')
+      preload: path.join(__dirname, 'preload.js')
     }
   })
   win.loadFile('index.html')
@@ -51,6 +51,8 @@ function createWindow () {
   }
 
   ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {
+    win.webContents.send('scroll', deltaX)
+    console.log(`ipcMain`, deltaX)
     for (const view of win.getBrowserViews()) {
       const {x, y, width, height} = view.getBounds()
       view.setBounds({ x: x - deltaX, y: y, width: width, height: height })
@@ -60,7 +62,7 @@ function createWindow () {
 
 function loadPages(window, columns) {
   for (let i = 0; i < columns.length; i++) {
-    loadPage(window, { x: i * columnWidth + offset, y: 0, width: columnWidth, height: 800 }, columns[i])
+    loadPage(window, { x: i * columnWidth + offset, y: 25, width: columnWidth, height: 800 }, columns[i])
   }
 }
 
@@ -102,7 +104,7 @@ function openAddColumn(window) {
     width: 500,
     height: 200,
     webPreferences: {
-      preload: path.join(__dirname, 'preload-page.js')
+      preload: path.join(__dirname, 'preload-modal.js')
     }
   })
   modal.loadFile('modal.html')
