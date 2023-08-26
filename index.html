@@ -53,6 +53,31 @@
     </div>
     <button id="addColumn" onclick="snsdeck.openAddColumn()">AddColumn</button>
     <script>
+      function removeColumn(e) {
+        const elemOfColumn = e.currentTarget.parentNode
+        console.log(elemOfColumn)
+        console.log('removeColumn')
+        const indexOfColumn = getIndexOfColumn(elemOfColumn)
+        console.log(indexOfColumn)
+        window.snsdeck.openRemoveColumn(indexOfColumn)
+        elemOfColumn.remove()
+      }
+      
+      function getIndexOfColumn(node) {
+        const columns = document.querySelectorAll('.column')
+        for (i = 0; i < columns.length; i++) {
+          if (node === columns[i]) {
+            return i
+          }
+        }
+        return -1
+      }
+
+      const buttons = document.querySelectorAll(".close")
+      for (btn of buttons) {
+        btn.addEventListener('click', removeColumn)
+      }
+
       window.snsdeck.onScroll((_event, deltaX) => {
         const columns = document.querySelectorAll(".column")
         for (column of columns) {
