@@ -30,13 +30,7 @@ function createWindow () {
       openAddColumn(win)
     })
 
-    ipcMain.on('openRemoveColumn', (_event, indexOfColumn) => {
-      const view = win.getBrowserViews()[indexOfColumn]
-      win.removeBrowserView(view)
-      const columns = store.get('columns')
-      const newColumns = columns.filter((_v,i) => i !== indexOfColumn)
-      store.set('columns', newColumns)
-    })
+    ipcMain.on('openRemoveColumn', handleRemoveColumn)
   })
   
   function handleAddCoulmn(_event, column) {
@@ -59,6 +53,28 @@ function createWindow () {
     store.set('columns', columns)
     loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: height}, col)
     win.webContents.send('onAddColumn')
+  }
+
+  function handleRemoveColumn(_event, indexOfColumn) {
+    const views = win.getBrowserViews()
+    console.log(views)
+    win.removeBrowserView(views[indexOfColumn])
+    const newViews = []
+    for (let i = indexOfColumn + 1; i < views.length; i++) {
+      console.log(`from handleRemoveColumn`, i)
+      const v = views[i]
+      const {x, y, width, height} = v.getBounds()
+      v.setBounds({x: x - columnWidth, y:y, width: width, height: height})
+      win.removeBrowserView(v)
+      newViews.push(v)
+    }
+    for (view of newViews) {
+      win.addBrowserView(view)
+    }
+
+    const columns = store.get('columns')
+    const newColumns = columns.filter((_v,i) => i !== indexOfColumn)
+    store.set('columns', newColumns)
   }
 
   ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {

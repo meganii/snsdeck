@@ -46,6 +46,9 @@
     </div>
     <button id="addColumn" onclick="snsdeck.openAddColumn()">AddColumn</button>
     <script>
+      const columnWidth = 400
+      const marginLeft = 150
+
       function removeColumn(e) {
         const elemOfColumn = e.currentTarget.parentNode
         console.log(elemOfColumn)
@@ -54,6 +57,15 @@
         console.log(indexOfColumn)
         window.snsdeck.openRemoveColumn(indexOfColumn)
         elemOfColumn.remove()
+        
+        // Redraw column
+        const columns = document.querySelectorAll(".column")
+        for (let i=indexOfColumn;i<columns.length;i++) {
+          const div = columns[i]
+          const left = div.style.left.slice(0, -2) - columnWidth
+          console.log(left)
+          div.style.left = `${left}px`
+        }
       }
       
       function getIndexOfColumn(node) {
@@ -81,7 +93,7 @@
         for (i = 0; i < numOfColumn; i++) {
           const div = document.createElement('div')
           div.className = 'column'
-          div.style = `top: 0px; left:${400*i+150}px`
+          div.style = `top: 0px; left:${columnWidth * i + marginLeft}px`
           const btn = document.createElement('button')
           btn.className = "close"
           btn.innerText = 'X'
@@ -100,7 +112,7 @@
         const controller = document.getElementById('controller')
         const div = document.createElement('div')
         div.className = 'column'
-        const left = 400 * columns.length + 150
+        const left = columnWidth * columns.length + marginLeft
         div.style = `top: 0px; left:${left}px`
         const btn = document.createElement('button')
         btn.className = "close"
