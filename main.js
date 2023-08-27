@@ -6,6 +6,7 @@ const path = require('path')
 
 const columnWidth = 400
 const offset = 150
+const marginTop = 25
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -30,17 +31,20 @@ function createWindow () {
     })
 
     ipcMain.on('openRemoveColumn', (_event, indexOfColumn) => {
-      console.log(indexOfColumn)
       const view = win.getBrowserViews()[indexOfColumn]
       win.removeBrowserView(view)
+      const columns = store.get('columns')
+      const newColumns = columns.filter((_v,i) => i !== indexOfColumn)
+      store.set('columns', newColumns)
     })
   })
   
   function handleAddCoulmn(_event, column) {
     const views = win.getBrowserViews()
+    const {height} = win.getBounds()
     let lastCol
     if(views.length === 0) {
-      lastCol = {x: -columnWidth + offset, y:0, width: columnWidth, height: 600}
+      lastCol = {x: -columnWidth + offset, y: marginTop, width: columnWidth, height: height}
     } else {
       lastCol = views[views.length-1].getBounds()
     }
@@ -53,7 +57,8 @@ function createWindow () {
       columns = [col]
     }
     store.set('columns', columns)
-    loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: lastCol.height}, col)
+    loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: height}, col)
+    win.webContents.send('onAddColumn')
   }
 
   ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {
@@ -68,8 +73,9 @@ function createWindow () {
 
 function loadPages(window, columns) {
   window.webContents.send('onload', columns.length)
+  const {height} = window.getBounds()
   for (let i = 0; i < columns.length; i++) {
-    loadPage(window, { x: i * columnWidth + offset, y: 25, width: columnWidth, height: 800 }, columns[i])
+    loadPage(window, { x: i * columnWidth + offset, y: marginTop, width: columnWidth, height: height-marginTop }, columns[i])
   }
 }
 
