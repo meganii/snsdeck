@@ -45,7 +45,7 @@ window.snsdeck.onLoadColumns((_event, numOfColumn) => {
     for (let i = 0; i < numOfColumn; i++) {
         const div = document.createElement('div')
         div.className = 'column'
-        div.style = `top: 0px; left:${columnWidth * i + marginLeft}px`
+        div.style = `top: 0px; left:${columnWidth * i + marginLeft}px;`
         const btn = document.createElement('button')
         btn.className = "close"
         btn.innerText = 'X'
@@ -61,11 +61,17 @@ window.snsdeck.onLoadColumns((_event, numOfColumn) => {
 
 window.snsdeck.onAddColumn((_event) => {
     const columns = document.querySelectorAll(".column")
+    const lastColumn = columns[columns.length-1]
     const controller = document.getElementById('controller')
     const div = document.createElement('div')
     div.className = 'column'
-    const left = columnWidth * columns.length + marginLeft
-    div.style = `top: 0px; left:${left}px`
+    let left = ''
+    if (columns.length > 0) {
+        left = parseInt(lastColumn.style.left.slice(0, -2)) + columnWidth
+    } else {
+        left = marginLeft
+    }
+    div.style = `top: 0px; left:${left}px;`
     const btn = document.createElement('button')
     btn.className = "close"
     btn.innerText = 'X'
