@@ -68,7 +68,7 @@ function createWindow () {
       win.removeBrowserView(v)
       newViews.push(v)
     }
-    for (view of newViews) {
+    for (const view of newViews) {
       win.addBrowserView(view)
     }
 
