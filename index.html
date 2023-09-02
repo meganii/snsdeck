@@ -13,6 +13,7 @@
     />
     <title>snsDeck</title>
     <style>
+      *,*::before,*::after{box-sizing:border-box}*{margin:0}body{line-height:1.5;-webkit-font-smoothing:antialiased}img,picture,video,canvas,svg{display:block;max-width:100%}input,button,textarea,select{font:inherit}p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word}#root,#__next{isolation:isolate}
       body {
         background-color: #f3f3f3;
       }
@@ -21,14 +22,29 @@
         white-space: nowrap;
       }
       #addColumn {
-        position: relative;
-        top: 20px;
+        position: absolute;
+        top: 30px;
         left: 10px;
+      }
+      #controller{
+        margin-left: 150px;
+      }
+      .column {
+        position: absolute;
+        background-color: #cccccc;
+        border-color: black;
+        border: 1px solid;
+        width: 400px;
+        height: 25px;
+        text-align: right;
       }
     </style>
   </head>
   <body>
-    <div id="container"></div>
+    <div id="container">
+      <div id="controller"></div>
+    </div>
     <button id="addColumn" onclick="snsdeck.openAddColumn()">AddColumn</button>
+    <script src="./renderer.js"></script>
   </body>
 </html>

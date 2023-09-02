@@ -6,13 +6,14 @@ const path = require('path')
 
 const columnWidth = 400
 const offset = 150
+const marginTop = 25
 
 function createWindow () {
   const win = new BrowserWindow({
     width: 1000,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload-page.js')
+      preload: path.join(__dirname, 'preload.js')
     }
   })
   win.loadFile('index.html')
@@ -28,13 +29,16 @@ function createWindow () {
     ipcMain.on('openAddColumn', (_event) => {
       openAddColumn(win)
     })
+
+    ipcMain.on('openRemoveColumn', handleRemoveColumn)
   })
   
   function handleAddCoulmn(_event, column) {
     const views = win.getBrowserViews()
+    const {height} = win.getBounds()
     let lastCol
     if(views.length === 0) {
-      lastCol = {x: -columnWidth + offset, y:0, width: columnWidth, height: 600}
+      lastCol = {x: -columnWidth + offset, y: marginTop, width: columnWidth, height: height}
     } else {
       lastCol = views[views.length-1].getBounds()
     }
@@ -47,10 +51,35 @@ function createWindow () {
       columns = [col]
     }
     store.set('columns', columns)
-    loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: lastCol.height}, col)
+    loadPage(win, {x: lastCol.x + columnWidth, y: lastCol.y, width: columnWidth, height: height}, col)
+    win.webContents.send('onAddColumn')
+  }
+
+  function handleRemoveColumn(_event, indexOfColumn) {
+    const views = win.getBrowserViews()
+    console.log(views)
+    win.removeBrowserView(views[indexOfColumn])
+    const newViews = []
+    for (let i = indexOfColumn + 1; i < views.length; i++) {
+      console.log(`from handleRemoveColumn`, i)
+      const v = views[i]
+      const {x, y, width, height} = v.getBounds()
+      v.setBounds({x: x - columnWidth, y:y, width: width, height: height})
+      win.removeBrowserView(v)
+      newViews.push(v)
+    }
+    for (const view of newViews) {
+      win.addBrowserView(view)
+    }
+
+    const columns = store.get('columns')
+    const newColumns = columns.filter((_v,i) => i !== indexOfColumn)
+    store.set('columns', newColumns)
   }
 
   ipcMain.on('wheel-event', (_event, deltaX, _deltaY, _deltaZ) => {
+    win.webContents.send('scroll', deltaX)
+    console.log(`ipcMain`, deltaX)
     for (const view of win.getBrowserViews()) {
       const {x, y, width, height} = view.getBounds()
       view.setBounds({ x: x - deltaX, y: y, width: width, height: height })
@@ -59,8 +88,10 @@ function createWindow () {
 }
 
 function loadPages(window, columns) {
+  window.webContents.send('onload', columns.length)
+  const {height} = window.getBounds()
   for (let i = 0; i < columns.length; i++) {
-    loadPage(window, { x: i * columnWidth + offset, y: 0, width: columnWidth, height: 800 }, columns[i])
+    loadPage(window, { x: i * columnWidth + offset, y: marginTop, width: columnWidth, height: height-marginTop }, columns[i])
   }
 }
 
@@ -102,7 +133,7 @@ function openAddColumn(window) {
     width: 500,
     height: 200,
     webPreferences: {
-      preload: path.join(__dirname, 'preload-page.js')
+      preload: path.join(__dirname, 'preload-modal.js')
     }
   })
   modal.loadFile('modal.html')
