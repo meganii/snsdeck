@@ -2,6 +2,7 @@
   "name": "snsdeck",
   "version": "0.0.3",
   "description": "SNS Viewer like TweetDeck.",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
