@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"
+    />
+    <title>Add column | snsDeck</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body class="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6">
+    <div class="flex flex-col gap-4">
+      <h2 class="text-xl font-bold">Add New Column</h2>
+
+      <div class="flex flex-col gap-1">
+        <label for="url" class="text-sm font-medium">URL</label>
+        <input
+          type="text"
+          name="url"
+          id="url"
+          placeholder="https://..."
+          class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="css" class="text-sm font-medium">Custom CSS</label>
+        <input
+          type="text"
+          name="css"
+          id="css"
+          placeholder=".class { display: none; }"
+          class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="partition" class="text-sm font-medium">Partition (Optional)</label>
+        <input
+          type="text"
+          name="partition"
+          id="partition"
+          placeholder="persist:example"
+          class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <button
+        id="buttonA"
+        class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium transition-colors"
+      >
+        Add Column
+      </button>
+    </div>
+
+    <script type="module">
+        import './index.css'; // Import tailwind styles
+        const btn = document.getElementById("buttonA");
+        btn.addEventListener("click", () => {
+            const elemUrl = document.getElementById("url");
+            const elemCss = document.getElementById("css");
+            const elemPartition = document.getElementById("partition");
+            console.log(elemUrl.value, elemCss.value);
+            snsdeck.addColumn({url: elemUrl.value, css: elemCss.value, partition: elemPartition.value});
+            window.close(); // Close modal after adding
+        });
+    </script>
+  </body>
+</html>
